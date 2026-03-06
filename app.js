@@ -191,12 +191,17 @@
   const armRBase = armR.position.clone();
   const legLBase = legL.position.clone();
   const legRBase = legR.position.clone();
+  const headBaseY = head.position.y;
+  const leftPupilBase = leftPupil.position.clone();
+  const rightPupilBase = rightPupil.position.clone();
 
   let reazioneFine = 0;
+  let tipoReazione = 0; // 0=salto+onda, 1=doppio salto, 2=orecchie, 3=scuotimento, 4=inchino, 5=stretch
   const DURATA_REAZIONE = 1.4;
 
   function reagisci() {
     reazioneFine = clock.getElapsedTime() + DURATA_REAZIONE;
+    tipoReazione = Math.floor(Math.random() * 6);
   }
 
   function giraVerso(angoloRad) {
@@ -213,25 +218,98 @@
     // Luigi si gira verso targetRotationY
     puppet.rotation.y += (targetRotationY - puppet.rotation.y) * dt * ROTATION_SPEED;
 
+    // —— Base: respiro e dondolio ——
     let baseY = 0.35 + Math.sin(t * 1.2) * 0.04;
     let scale = 1;
+    let bodyTiltX = 0;
+    let bodyTiltZ = Math.sin(t * 0.8) * 0.03;
+    let headNod = Math.sin(t * 1.1) * 0.06;
+    let headTilt = Math.sin(t * 0.7 + 1) * 0.04;
+    let earWiggleL = 0.15 + Math.sin(t * 4) * 0.06;
+    let earWiggleR = -0.15 - Math.sin(t * 4 + 0.3) * 0.06;
+    let earDroop = 0;
+    let pupilLookX = Math.sin(t * 0.5) * 0.012;
+    let pupilLookY = Math.sin(t * 0.35 + 2) * 0.008;
+    let headBob = 0;
+    let puppetShake = 0;
+    let armStretch = 0;
 
     if (inReazione) {
-      const jump = Math.sin(progressReazione * Math.PI);
-      baseY += jump * 0.18;
-      scale = 1 + Math.sin(progressReazione * Math.PI) * 0.12;
+      const p = progressReazione;
+      const jump = Math.sin(p * Math.PI);
+      const jump2 = Math.sin(p * Math.PI * 2) * (1 - p);
+
+      switch (tipoReazione) {
+        case 0: // Salto + onda braccia
+          baseY += jump * 0.18;
+          scale = 1 + jump * 0.12;
+          break;
+        case 1: // Doppio saltino
+          baseY += jump * 0.12 + jump2 * 0.08;
+          scale = 1 + Math.sin(p * Math.PI * 2) * 0.06;
+          headBob = jump * 0.05;
+          break;
+        case 2: // Orecchie su e giù
+          earDroop = (1 - jump) * 0.25;
+          earWiggleL = 0.15 + Math.sin(p * Math.PI * 4) * 0.15;
+          earWiggleR = -0.15 - Math.sin(p * Math.PI * 4 + 0.2) * 0.15;
+          baseY += jump * 0.06;
+          break;
+        case 3: // Scuotimento
+          puppetShake = Math.sin(p * Math.PI * 8) * (1 - p) * 0.25;
+          scale = 1 + jump * 0.05;
+          break;
+        case 4: // Inchino (tilt avanti)
+          bodyTiltX = jump * 0.35;
+          headNod = jump * 0.2;
+          baseY += jump * 0.08;
+          break;
+        case 5: // Stretch braccia in alto
+          armStretch = jump * 0.35;
+          baseY += jump * 0.1;
+          scale = 1 + jump * 0.08;
+          break;
+      }
     }
 
     puppet.position.y = baseY;
     puppet.scale.setScalar(scale);
+    puppet.rotation.z = puppetShake;
 
+    // Corpo: tilt (respirazione + reazione)
+    body.rotation.x = bodyTiltX;
+    body.rotation.z = bodyTiltZ;
+
+    // Testa: cenno, inclinazione, bob
+    head.rotation.x = headNod;
+    head.rotation.z = headTilt;
+    head.position.y = headBaseY + headBob;
+
+    // Orecchie: movimento base + reazione
+    earL.rotation.z = earWiggleL - earDroop * 0.5;
+    earR.rotation.z = earWiggleR - earDroop * 0.5;
+
+    // Pupille: guardano in giro (idle) o al centro (in reazione)
+    var px = leftPupilBase.x + (inReazione ? 0 : pupilLookX);
+    var py = leftPupilBase.y + (inReazione ? 0 : pupilLookY);
+    leftPupil.position.set(px, py, leftPupil.position.z);
+    rightPupil.position.set(rightPupilBase.x + (inReazione ? 0 : pupilLookX), rightPupilBase.y + (inReazione ? 0 : pupilLookY), rightPupil.position.z);
+
+    // Braccia
     let armLY = armLBase.y, armRY = armRBase.y, armLX = armLBase.x, armRX = armRBase.x;
     if (inReazione) {
       const wave = Math.sin(progressReazione * Math.PI);
-      armLY += wave * 0.12;
-      armRY += wave * 0.12;
-      armLX -= wave * 0.04;
-      armRX += wave * 0.04;
+      if (tipoReazione === 5) {
+        armLY += armStretch;
+        armRY += armStretch;
+        armLX -= wave * 0.02;
+        armRX += wave * 0.02;
+      } else {
+        armLY += wave * 0.12;
+        armRY += wave * 0.12;
+        armLX -= wave * 0.04;
+        armRX += wave * 0.04;
+      }
     } else {
       armLX += Math.sin(t * 1.5) * 0.03;
       armLY += Math.abs(Math.sin(t * 1.8)) * 0.02;
@@ -241,8 +319,18 @@
     armL.position.set(armLX, armLY, armL.position.z);
     armR.position.set(armRX, armRY, armR.position.z);
 
-    legL.position.y = legLBase.y + Math.sin(t * 1.3) * 0.015;
-    legR.position.y = legRBase.y + Math.sin(t * 1.3 + 0.8) * 0.015;
+    // Gambe: passo leggero + peso
+    const legSwing = Math.sin(t * 1.3) * 0.02;
+    const legSwingR = Math.sin(t * 1.3 + 0.8) * 0.02;
+    legL.position.y = legLBase.y + Math.sin(t * 1.3) * 0.015 + (inReazione ? Math.sin(progressReazione * Math.PI) * 0.03 : 0);
+    legR.position.y = legRBase.y + Math.sin(t * 1.3 + 0.8) * 0.015 + (inReazione ? Math.sin(progressReazione * Math.PI) * 0.03 : 0);
+    legL.position.x = legLBase.x - legSwing;
+    legR.position.x = legRBase.x + legSwingR;
+    legL.rotation.z = Math.sin(t * 1.1) * 0.04;
+    legR.rotation.z = Math.sin(t * 1.1 + 0.7) * 0.04;
+
+    // Naso: micro-movimento
+    nose.position.z = 0.24 + Math.sin(t * 2) * 0.008;
 
     renderer.render(scene, camera);
   }
@@ -370,17 +458,23 @@
 
   micBtn.addEventListener('click', toggleMic);
 
-  // Tocco sullo schermo: Luigi si gira verso il lato toccato
+  // Tocco sullo schermo: Luigi reagisce (salto, ondeggio) e si gira verso il lato toccato
+  function onTapOrTouch(xNorm) {
+    reagisci();
+    giraVerso((xNorm - 0.5) * 0.6);
+  }
   canvas.addEventListener('click', function (e) {
+    e.preventDefault();
     var x = e.clientX / window.innerWidth;
-    giraVerso((x - 0.5) * 0.6);
+    onTapOrTouch(x);
   });
   canvas.addEventListener('touchend', function (e) {
     if (e.changedTouches && e.changedTouches[0]) {
+      e.preventDefault();
       var x = e.changedTouches[0].clientX / window.innerWidth;
-      giraVerso((x - 0.5) * 0.6);
+      onTapOrTouch(x);
     }
-  });
+  }, { passive: false });
 
   animate();
 })();
