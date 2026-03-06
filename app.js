@@ -7,6 +7,23 @@
   camera.position.set(0, 0.8, 2.2);
   camera.lookAt(0, 0.4, 0);
 
+  function updateCameraForViewport() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const aspect = w / h;
+    const isPortrait = aspect < 1;
+    if (isPortrait) {
+      camera.fov = 58;
+      camera.position.set(0, 0.45, 3.4);
+      camera.lookAt(0, 0.25, 0);
+    } else {
+      camera.fov = 50;
+      camera.position.set(0, 0.8, 2.2);
+      camera.lookAt(0, 0.4, 0);
+    }
+    camera.updateProjectionMatrix();
+  }
+
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.shadowMap.enabled = true;
@@ -96,28 +113,30 @@
   // Prato (piano sotto)
   var grassMat = new THREE.MeshStandardMaterial({ color: 0x6ab84a, roughness: 0.95, metalness: 0 });
 
-  // Materiali – stile Bing, un po' più scuri
-  const skin = new THREE.MeshStandardMaterial({ color: 0xc4956a, roughness: 0.9, metalness: 0.05 });
-  const bodyMat = new THREE.MeshStandardMaterial({ color: 0x4a8a3d, roughness: 0.85, metalness: 0.05 });
-  const earMat = new THREE.MeshStandardMaterial({ color: 0xc4956a, roughness: 0.9 });
-  const eyeWhite = new THREE.MeshStandardMaterial({ color: 0xe8e4dc, roughness: 0.8 });
-  const eyePupil = new THREE.MeshStandardMaterial({ color: 0x2c1810 });
-  const noseMat = new THREE.MeshStandardMaterial({ color: 0xb87850, roughness: 0.9 });
+  // Materiali – stile Bing (coniglietto nero, body rosso)
+  const blackFur = new THREE.MeshStandardMaterial({ color: 0x1e1e1e, roughness: 0.95, metalness: 0 });
+  const bodyMat = new THREE.MeshStandardMaterial({ color: 0xb71c1c, roughness: 0.9, metalness: 0.05 });
+  const earMat = new THREE.MeshStandardMaterial({ color: 0x1e1e1e, roughness: 0.95, metalness: 0 });
+  const eyeWhite = new THREE.MeshStandardMaterial({ color: 0xfafafa, roughness: 0.7 });
+  const eyePupil = new THREE.MeshStandardMaterial({ color: 0x1a1a1a });
+  const noseMat = new THREE.MeshStandardMaterial({ color: 0xe57373, roughness: 0.9 });
+  const buttonMat = new THREE.MeshStandardMaterial({ color: 0xffeb3b, roughness: 0.6, metalness: 0.1 });
 
-  // Luigi – pupazzo animalesco (orecchie lunghe, musetto)
+  // Bing – coniglietto nero (stile serie animata)
   const puppet = new THREE.Group();
   puppet.position.set(0, 0.35, 0);
 
-  // Testa (sfera un po' schiacciata)
+  // Testa nera rotonda
   const headGeo = new THREE.SphereGeometry(0.26, 32, 32);
-  const head = new THREE.Mesh(headGeo, skin);
+  const head = new THREE.Mesh(headGeo, blackFur);
   head.position.y = 0.48;
-  head.scale.y = 1.05;
+  head.scale.y = 1.08;
+  head.scale.x = 0.98;
   head.castShadow = true;
   puppet.add(head);
 
-  // Orecchie (coni lunghi – stile coniglietto/animale)
-  const earGeo = new THREE.CylinderGeometry(0.06, 0.12, 0.4, 16);
+  // Orecchie lunghe nere
+  const earGeo = new THREE.CylinderGeometry(0.055, 0.11, 0.42, 16);
   const earL = new THREE.Mesh(earGeo, earMat);
   earL.position.set(-0.14, 0.78, 0);
   earL.rotation.z = 0.15;
@@ -151,18 +170,24 @@
   nose.position.set(0, 0.44, 0.24);
   puppet.add(nose);
 
-  // Corpo (maglia)
+  // Corpo (tuta rossa tipo onesie Bing)
   const bodyGeo = new THREE.SphereGeometry(0.3, 32, 32, 0, Math.PI * 2, 0, Math.PI * 0.55);
   const body = new THREE.Mesh(bodyGeo, bodyMat);
   body.position.y = 0.08;
   body.castShadow = true;
   puppet.add(body);
 
+  // Bottone grande al centro (stile Bing)
+  const buttonGeo = new THREE.SphereGeometry(0.055, 16, 16);
+  const button = new THREE.Mesh(buttonGeo, buttonMat);
+  button.position.set(0, 0.12, 0.28);
+  puppet.add(button);
+
   const armGeo = new THREE.SphereGeometry(0.07, 16, 16);
-  const armL = new THREE.Mesh(armGeo, skin);
+  const armL = new THREE.Mesh(armGeo, blackFur);
   armL.position.set(-0.26, 0.32, 0.06);
   puppet.add(armL);
-  const armR = new THREE.Mesh(armGeo, skin);
+  const armR = new THREE.Mesh(armGeo, blackFur);
   armR.position.set(0.26, 0.32, 0.06);
   puppet.add(armR);
 
@@ -176,13 +201,122 @@
 
   scene.add(puppet);
 
+  // —— Cagnolino al guinzaglio (stylized, animato) ——
+  const dogBodyMat = new THREE.MeshStandardMaterial({ color: 0x8d6e63, roughness: 0.9, metalness: 0 });
+  const dogNoseMat = new THREE.MeshStandardMaterial({ color: 0x2d2d2d, roughness: 0.8 });
+  const dogEyeMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a });
+  const leashMat = new THREE.MeshStandardMaterial({ color: 0x795548, roughness: 0.95 });
+
+  const dog = new THREE.Group();
+  dog.position.set(0.5, 0.18, 0.12);
+  dog.rotation.y = -0.2;
+
+  const dogBodyGeo = new THREE.SphereGeometry(0.12, 16, 16);
+  const dogBody = new THREE.Mesh(dogBodyGeo, dogBodyMat);
+  dogBody.position.y = 0.02;
+  dogBody.castShadow = true;
+  dog.add(dogBody);
+
+  const dogHeadGeo = new THREE.SphereGeometry(0.08, 12, 12);
+  const dogHead = new THREE.Mesh(dogHeadGeo, dogBodyMat);
+  dogHead.position.set(0, 0.14, 0.1);
+  dogHead.castShadow = true;
+  dog.add(dogHead);
+
+  const dogNoseGeo = new THREE.SphereGeometry(0.025, 8, 8);
+  const dogNose = new THREE.Mesh(dogNoseGeo, dogNoseMat);
+  dogNose.position.set(0, 0.14, 0.165);
+  dog.add(dogNose);
+
+  const dogEyeGeo = new THREE.SphereGeometry(0.015, 8, 8);
+  const dogEyeL = new THREE.Mesh(dogEyeGeo, dogEyeMat);
+  dogEyeL.position.set(-0.025, 0.16, 0.14);
+  dog.add(dogEyeL);
+  const dogEyeR = new THREE.Mesh(dogEyeGeo, dogEyeMat);
+  dogEyeR.position.set(0.025, 0.16, 0.14);
+  dog.add(dogEyeR);
+
+  const dogEarGeo = new THREE.SphereGeometry(0.04, 8, 8, 0, Math.PI * 2, 0, Math.PI * 0.5);
+  const dogEarL = new THREE.Mesh(dogEarGeo, dogBodyMat);
+  dogEarL.position.set(-0.055, 0.2, 0.08);
+  dogEarL.rotation.z = 0.3;
+  dog.add(dogEarL);
+  const dogEarR = new THREE.Mesh(dogEarGeo, dogBodyMat);
+  dogEarR.position.set(0.055, 0.2, 0.08);
+  dogEarR.rotation.z = -0.3;
+  dog.add(dogEarR);
+
+  const dogTailGeo = new THREE.CylinderGeometry(0.015, 0.03, 0.12, 6);
+  const dogTail = new THREE.Mesh(dogTailGeo, dogBodyMat);
+  dogTail.position.set(0, 0.02, -0.14);
+  dogTail.rotation.x = 0.4;
+  dog.add(dogTail);
+
+  const dogLegGeo = new THREE.CylinderGeometry(0.02, 0.022, 0.08, 6);
+  const dogLegFL = new THREE.Mesh(dogLegGeo, dogBodyMat);
+  dogLegFL.position.set(-0.06, -0.06, 0.08);
+  dog.add(dogLegFL);
+  const dogLegFR = new THREE.Mesh(dogLegGeo, dogBodyMat);
+  dogLegFR.position.set(0.06, -0.06, 0.08);
+  dog.add(dogLegFR);
+  const dogLegBL = new THREE.Mesh(dogLegGeo, dogBodyMat);
+  dogLegBL.position.set(-0.06, -0.06, -0.08);
+  dog.add(dogLegBL);
+  const dogLegBR = new THREE.Mesh(dogLegGeo, dogBodyMat);
+  dogLegBR.position.set(0.06, -0.06, -0.08);
+  dog.add(dogLegBR);
+
+  scene.add(dog);
+
+  // Guinzaglio (cilindro tra mano di Bing e collare del cane)
+  const leashGeo = new THREE.CylinderGeometry(0.008, 0.008, 0.5, 6);
+  const leash = new THREE.Mesh(leashGeo, leashMat);
+  leash.visible = true;
+  scene.add(leash);
+
   var floorGeo = new THREE.PlaneGeometry(20, 20);
   var floor = new THREE.Mesh(floorGeo, grassMat);
   floor.rotation.x = -Math.PI / 2;
   floor.receiveShadow = true;
   scene.add(floor);
 
-  // Rotazione: Luigi si gira (interpolata)
+  // —— Ambiente stile serie: casetta e recinto ——
+  const houseMat = new THREE.MeshStandardMaterial({ color: 0xf5deb3, roughness: 0.9 });
+  const roofMat = new THREE.MeshStandardMaterial({ color: 0x8b4513, roughness: 0.85 });
+  const fenceMat = new THREE.MeshStandardMaterial({ color: 0xdeb887, roughness: 0.9 });
+  const houseBase = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.9, 0.8), houseMat);
+  houseBase.position.set(-1.8, 0.55, -3.5);
+  houseBase.castShadow = true;
+  scene.add(houseBase);
+  const roofGeo = new THREE.ConeGeometry(0.85, 0.5, 4);
+  const roof = new THREE.Mesh(roofGeo, roofMat);
+  roof.position.set(-1.8, 1.15, -3.5);
+  roof.rotation.y = Math.PI / 4;
+  roof.castShadow = true;
+  scene.add(roof);
+  const fence1 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.35, 1.5), fenceMat);
+  fence1.position.set(-2.6, 0.22, -3.2);
+  scene.add(fence1);
+  const fence2 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.35, 1.5), fenceMat);
+  fence2.position.set(-1.0, 0.22, -3.2);
+  scene.add(fence2);
+
+  // —— Carota 3D (sul prato, Bing può "mangiarla") ——
+  const carrotMat = new THREE.MeshStandardMaterial({ color: 0xff8c00, roughness: 0.9 });
+  const carrotTopMat = new THREE.MeshStandardMaterial({ color: 0x228b22, roughness: 0.95 });
+  const carrotGroup = new THREE.Group();
+  carrotGroup.position.set(-0.38, 0.07, 0.25);
+  const carrotBody = new THREE.Mesh(new THREE.CylinderGeometry(0, 0.035, 0.14, 8), carrotMat);
+  carrotBody.rotation.x = Math.PI / 2;
+  carrotBody.position.z = 0.04;
+  carrotGroup.add(carrotBody);
+  const carrotTop = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), carrotTopMat);
+  carrotTop.position.set(0, 0, -0.04);
+  carrotGroup.add(carrotTop);
+  scene.add(carrotGroup);
+  const carrotBasePos = carrotGroup.position.clone();
+
+  // Rotazione: Bing si gira (interpolata)
   let targetRotationY = 0;
   const ROTATION_SPEED = 4;
 
@@ -198,6 +332,14 @@
   let reazioneFine = 0;
   let tipoReazione = 0; // 0=salto+onda, 1=doppio salto, 2=orecchie, 3=scuotimento, 4=inchino, 5=stretch
   const DURATA_REAZIONE = 1.4;
+
+  let currentMood = 'neutral'; // neutral | happy | sad | surprised
+  let moodFine = 0;
+  let carrotEatStart = 0; // 0 = non in corso
+  const DURATA_MANGIA_CAROTA = 1.5;
+  let carrotRespawnTime = 0;
+  let danceFine = 0;
+  const DURATA_BALLO = 3.2;
 
   function reagisci() {
     reazioneFine = clock.getElapsedTime() + DURATA_REAZIONE;
@@ -215,7 +357,7 @@
     const inReazione = t < reazioneFine;
     const progressReazione = inReazione ? 1 - (reazioneFine - t) / DURATA_REAZIONE : 0;
 
-    // Luigi si gira verso targetRotationY
+    // Bing si gira verso targetRotationY
     puppet.rotation.y += (targetRotationY - puppet.rotation.y) * dt * ROTATION_SPEED;
 
     // —— Base: respiro e dondolio ——
@@ -289,11 +431,21 @@
     earL.rotation.z = earWiggleL - earDroop * 0.5;
     earR.rotation.z = earWiggleR - earDroop * 0.5;
 
-    // Pupille: guardano in giro (idle) o al centro (in reazione)
-    var px = leftPupilBase.x + (inReazione ? 0 : pupilLookX);
-    var py = leftPupilBase.y + (inReazione ? 0 : pupilLookY);
+    // Emozioni: scala occhi e offset pupille (happy / sad / surprised)
+    var eyeScale = 1;
+    var moodPupilX = 0, moodPupilY = 0;
+    if (t < moodFine) {
+      if (currentMood === 'happy') { eyeScale = 1.14; moodPupilY = 0.01; }
+      else if (currentMood === 'sad') { eyeScale = 0.92; moodPupilY = -0.012; }
+      else if (currentMood === 'surprised') { eyeScale = 1.28; }
+    }
+    leftEye.scale.setScalar(eyeScale);
+    rightEye.scale.setScalar(eyeScale);
+    // Pupille: guardano in giro (idle) o al centro (in reazione) + mood
+    var px = leftPupilBase.x + (inReazione ? 0 : pupilLookX) + moodPupilX;
+    var py = leftPupilBase.y + (inReazione ? 0 : pupilLookY) + moodPupilY;
     leftPupil.position.set(px, py, leftPupil.position.z);
-    rightPupil.position.set(rightPupilBase.x + (inReazione ? 0 : pupilLookX), rightPupilBase.y + (inReazione ? 0 : pupilLookY), rightPupil.position.z);
+    rightPupil.position.set(rightPupilBase.x + (inReazione ? 0 : pupilLookX) + moodPupilX, rightPupilBase.y + (inReazione ? 0 : pupilLookY) + moodPupilY, rightPupil.position.z);
 
     // Braccia
     let armLY = armLBase.y, armRY = armRBase.y, armLX = armLBase.x, armRX = armRBase.x;
@@ -332,6 +484,73 @@
     // Naso: micro-movimento
     nose.position.z = 0.24 + Math.sin(t * 2) * 0.008;
 
+    // —— Cagnolino: animazione (coda, dondolio, orecchie) ——
+    const tailWag = Math.sin(t * 8) * 0.35;
+    dogTail.rotation.z = tailWag;
+    dogTail.rotation.x = 0.4 + Math.sin(t * 2) * 0.05;
+    dogHead.rotation.y = Math.sin(t * 1.5) * 0.1;
+    dogHead.rotation.x = Math.sin(t * 1.2) * 0.05;
+    dog.position.x = 0.5 + Math.sin(t * 0.8) * 0.02;
+    dog.position.y = 0.18 + Math.abs(Math.sin(t * 3)) * 0.015;
+    dogEarL.rotation.z = 0.3 + Math.sin(t * 4) * 0.08;
+    dogEarR.rotation.z = -0.3 - Math.sin(t * 4 + 0.5) * 0.08;
+    dogLegFL.position.y = -0.06 + Math.sin(t * 5) * 0.01;
+    dogLegFR.position.y = -0.06 + Math.sin(t * 5 + 1.5) * 0.01;
+    dogLegBL.position.y = -0.06 + Math.sin(t * 5 + 0.8) * 0.01;
+    dogLegBR.position.y = -0.06 + Math.sin(t * 5 + 2.3) * 0.01;
+
+    // —— Guinzaglio: da mano di Bing al collare del cane ——
+    var handWorld = new THREE.Vector3();
+    var collarWorld = new THREE.Vector3();
+    armR.getWorldPosition(handWorld);
+    dog.getWorldPosition(collarWorld);
+    collarWorld.y += 0.06;
+    var leashDir = handWorld.clone().sub(collarWorld);
+    var leashLen = leashDir.length();
+    if (leashLen > 0.01) {
+      leashDir.normalize();
+      leash.scale.set(1, Math.max(0.2, leashLen / 0.5), 1);
+      leash.position.copy(collarWorld).add(handWorld).multiplyScalar(0.5);
+      leash.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), leashDir);
+      leash.visible = true;
+    } else {
+      leash.visible = false;
+    }
+
+    // —— Carota: animazione "mangia" e respawn ——
+    if (carrotEatStart > 0) {
+      var prog = (t - carrotEatStart) / DURATA_MANGIA_CAROTA;
+      if (prog < 1) {
+        var targetCarrot = new THREE.Vector3(0, 0.52, 0.32);
+        carrotGroup.position.lerpVectors(carrotBasePos, targetCarrot, prog);
+        carrotGroup.scale.setScalar(1 - prog * 0.95);
+      } else {
+        carrotGroup.visible = false;
+        carrotGroup.scale.setScalar(1);
+        if (carrotRespawnTime === 0) carrotRespawnTime = t + 2.5;
+      }
+    }
+    if (carrotRespawnTime > 0 && t > carrotRespawnTime) {
+      carrotGroup.position.copy(carrotBasePos);
+      carrotGroup.visible = true;
+      carrotRespawnTime = 0;
+      carrotEatStart = 0;
+    }
+
+    // —— Ballo: animazione quando l'utente dice "balla" o "danza" ——
+    var isDancing = t < danceFine;
+    if (isDancing) {
+      var danceProg = 1 - (danceFine - t) / DURATA_BALLO;
+      var bounce = Math.abs(Math.sin(t * 12)) * 0.08;
+      var sway = Math.sin(t * 8) * 0.25;
+      puppet.position.y = baseY + bounce;
+      puppet.rotation.y += sway * dt * 3;
+      armL.position.x = armLBase.x - 0.08 - Math.sin(t * 10) * 0.06;
+      armR.position.x = armRBase.x + 0.08 + Math.sin(t * 10 + 0.5) * 0.06;
+      armL.position.y = armLBase.y + Math.abs(Math.sin(t * 10)) * 0.1;
+      armR.position.y = armRBase.y + Math.abs(Math.sin(t * 10 + 0.5)) * 0.1;
+    }
+
     renderer.render(scene, camera);
   }
 
@@ -341,27 +560,45 @@
     canvas.width = w;
     canvas.height = h;
     camera.aspect = w / h;
-    camera.updateProjectionMatrix();
+    updateCameraForViewport();
     renderer.setSize(w, h);
   }
   window.addEventListener('resize', resize);
+  updateCameraForViewport();
 
   // —— Regole e risposte (caricate da risposte.json) ——
   const regoleDefault = [
-    { trigger: ["ciao", "salve", "ehi", "hey", "buongiorno", "buonasera"], risposta: "Ciao! Sono Luigi, piacere di conoscerti!" },
-    { trigger: ["come ti chiami", "chi sei"], risposta: "Sono Luigi, il tuo amico pupazzo! Sono qui per chiacchierare con te." },
+    { trigger: ["ciao", "salve", "ehi", "hey", "buongiorno", "buonasera"], risposta: "Ciao! Sono Bing, piacere di conoscerti!" },
+    { trigger: ["come ti chiami", "chi sei"], risposta: "Sono Bing, il coniglietto! Sono qui per chiacchierare con te." },
+    { trigger: ["balla", "danza", "ballare", "danzare"], risposta: "Guarda guarda! Ballo per te!" },
+    { trigger: ["consiglio", "cosa faccio", "aiutami a decidere", "flop"], risposta: "Flop dice sempre che ogni giorno è un giorno Bing!" },
     { trigger: ["come stai", "come va", "tutto bene"], risposta: "Io sto benissimo, grazie! E tu come stai oggi?" },
     { trigger: ["grazie", "grazie mille"], risposta: "Prego! Sono sempre qui se hai bisogno." },
     { trigger: ["ti voglio bene", "ti amo", "sei simpatico"], risposta: "Anch'io ti voglio bene! Mi fai tanto felice!" },
     { trigger: ["ciao ciao", "arrivederci", "a dopo", "devo andare"], risposta: "Ciao ciao! Torna quando vuoi, ti aspetto!" },
     { trigger: ["che fai", "cosa fai"], risposta: "Sto qui con te! Mi piace parlare e ascoltare. Tu che cosa stai facendo?" },
-    { trigger: ["racconta", "raccontami", "una storia"], risposta: "Mi piace tantissimo ascoltare! Raccontami tu qualcosa." },
+    { trigger: ["racconta", "raccontami", "una storia", "favola"], risposta: "" },
     { trigger: ["bene", "benissimo", "felice", "contento"], risposta: "Che bello! Sono proprio contento per te!" },
     { trigger: ["male", "triste", "arrabbiato", "stanco"], risposta: "Mi dispiace. Se vuoi parlare sono qui, ti ascolto. Ti mando un abbraccio!" }
   ];
 
   let regole = regoleDefault.slice();
   let fallback = "Mmh, non ho capito bene. Puoi ripetere? Oppure dimmi ciao!";
+
+  const STORIE_BING = [
+    "Oggi è un giorno Bing! Tutto può succedere quando sei con i tuoi amici.",
+    "Una volta Bing e Flop andarono nel giardino. Bing trovò una carota gigante! Crunch crunch!",
+    "Bing ama le storie. La sua preferita? Quella del coniglietto che incontra un nuovo amico ogni giorno!",
+    "Flop dice che ogni giorno è speciale. E oggi è un giorno Bing!",
+    "C'era una volta un coniglietto nero che adorava le carote e i suoi amici. Era Bing!"
+  ];
+
+  const FRASI_FLOP = [
+    "È un Bing thing! Flop dice sempre che le cose si risolvono con calma.",
+    "Flop dice sempre che ogni giorno è un giorno Bing! Provaci e vedrai.",
+    "Flop direbbe: prendi il tuo tempo, un passo alla volta. È un Bing thing!",
+    "Flop dice che quando non sai cosa fare, basta fare un respiro e provare. È un Bing thing!"
+  ];
 
   function caricaRegole() {
     fetch('risposte.json')
@@ -379,17 +616,53 @@
   function trovaRisposta(testoUtente) {
     const t = (testoUtente || '').toLowerCase().trim();
     var elenco = regole.length ? regole : regoleDefault;
-    if (!t) return fallback;
+    var defaultRes = { risposta: fallback, mood: 'neutral', action: null };
+
+    if (!t) return defaultRes;
+
     for (var i = 0; i < elenco.length; i++) {
       var triggers = elenco[i].trigger || [];
       for (var j = 0; j < triggers.length; j++) {
-        if (t.indexOf(triggers[j].toLowerCase()) !== -1) return elenco[i].risposta || fallback;
+        var trig = triggers[j].toLowerCase();
+        if (t.indexOf(trig) === -1) continue;
+
+        var risposta = elenco[i].risposta || fallback;
+        var mood = 'neutral';
+        var action = null;
+
+        if (t.indexOf('balla') !== -1 || t.indexOf('danza') !== -1) {
+          risposta = "Guarda guarda! Ballo per te!";
+          mood = 'happy';
+          action = 'balla';
+          return { risposta: risposta, mood: mood, action: action };
+        }
+        if (t.indexOf('carota') !== -1 || t.indexOf('carote') !== -1) {
+          mood = 'happy';
+          action = 'carota';
+          return { risposta: risposta, mood: mood, action: action };
+        }
+        if (t.indexOf('racconta') !== -1 || t.indexOf('storia') !== -1 || t.indexOf('favola') !== -1) {
+          risposta = STORIE_BING[Math.floor(Math.random() * STORIE_BING.length)];
+          mood = 'surprised';
+          return { risposta: risposta, mood: mood, action: null };
+        }
+        if (t.indexOf('consiglio') !== -1 || t.indexOf('cosa faccio') !== -1 || t.indexOf('aiutami a decidere') !== -1 || t.indexOf('flop') !== -1) {
+          risposta = FRASI_FLOP[Math.floor(Math.random() * FRASI_FLOP.length)];
+          mood = 'neutral';
+          return { risposta: risposta, mood: mood, action: null };
+        }
+
+        if (t.indexOf('bene') !== -1 || t.indexOf('felice') !== -1 || t.indexOf('contento') !== -1 || t.indexOf('ti voglio bene') !== -1) mood = 'happy';
+        else if (t.indexOf('triste') !== -1 || t.indexOf('male') !== -1 || t.indexOf('dispiace') !== -1) mood = 'sad';
+        else if (t.indexOf('ciao') !== -1 || t.indexOf('stupito') !== -1) mood = 'happy';
+
+        return { risposta: risposta, mood: mood, action: action };
       }
     }
-    return fallback;
+    return defaultRes;
   }
 
-  // —— Voce italiana (risposta di Luigi) ——
+  // —— Voce italiana (risposta di Bing) ——
   let italianVoice = null;
   function initVoices() {
     var voices = window.speechSynthesis.getVoices();
@@ -400,6 +673,33 @@
     if (window.speechSynthesis.onvoiceschanged) window.speechSynthesis.onvoiceschanged = initVoices;
   }
 
+  // —— Suoni (Web Audio): tocco e quando parla ——
+  var audioCtx = null;
+  function getAudioCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  }
+  function playSound(type) {
+    try {
+      var ctx = getAudioCtx();
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+      if (type === 'tap') {
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+        osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.08);
+      } else {
+        osc.frequency.setValueAtTime(392, ctx.currentTime);
+        osc.type = 'sine';
+      }
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.2);
+    } catch (e) {}
+  }
+
   function parla(testo) {
     if (!('speechSynthesis' in window) || !testo) return;
     window.speechSynthesis.cancel();
@@ -408,7 +708,7 @@
     u.rate = 0.92;
     u.pitch = 1.05;
     if (italianVoice) u.voice = italianVoice;
-    u.onstart = function () { reagisci(); giraVerso(0); };
+    u.onstart = function () { reagisci(); giraVerso(0); playSound('speak'); };
     window.speechSynthesis.speak(u);
   }
 
@@ -426,9 +726,13 @@
       recognition.lang = 'it-IT';
       recognition.onresult = function (e) {
         var testo = (e.results[0] && e.results[0][0]) ? e.results[0][0].transcript : '';
-        var risposta = trovaRisposta(testo);
+        var r = trovaRisposta(testo);
+        currentMood = r.mood;
+        moodFine = clock.getElapsedTime() + 4;
+        if (r.action === 'carota') carrotEatStart = clock.getElapsedTime();
+        if (r.action === 'balla') danceFine = clock.getElapsedTime() + DURATA_BALLO;
         giraVerso(0);
-        parla(risposta);
+        parla(r.risposta);
       };
       recognition.onend = function () {
         ascoltando = false;
@@ -458,8 +762,9 @@
 
   micBtn.addEventListener('click', toggleMic);
 
-  // Tocco sullo schermo: Luigi reagisce (salto, ondeggio) e si gira verso il lato toccato
+  // Tocco sullo schermo: Bing reagisce (salto, ondeggio) e si gira verso il lato toccato
   function onTapOrTouch(xNorm) {
+    playSound('tap');
     reagisci();
     giraVerso((xNorm - 0.5) * 0.6);
   }

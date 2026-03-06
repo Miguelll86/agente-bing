@@ -1,14 +1,14 @@
 {
-  "nome": "Luigi",
-  "istruzioni": "Modifica le regole qui sotto per istruire Luigi. 'trigger': parole o frasi che l'utente può dire. 'risposta': cosa risponde Luigi. Se più regole corrispondono, viene usata la prima.",
+  "nome": "Bing",
+  "istruzioni": "Modifica le regole qui sotto per istruire Bing. 'trigger': parole o frasi che l'utente può dire. 'risposta': cosa risponde Bing. Se più regole corrispondono, viene usata la prima.",
   "regole": [
     {
-      "trigger": ["ciao", "salve", "ehi", "hey", "ciao luigi", "buongiorno", "buonasera", "buon pomeriggio"],
-      "risposta": "Ciao! Sono Luigi, piacere di conoscerti! Come stai?"
+      "trigger": ["ciao", "salve", "ehi", "hey", "ciao bing", "buongiorno", "buonasera", "buon pomeriggio"],
+      "risposta": "Ciao! Sono Bing, piacere di conoscerti! Come stai?"
     },
     {
       "trigger": ["come ti chiami", "chi sei", "come si chiama", "tu chi sei", "nome"],
-      "risposta": "Sono Luigi, il tuo amico pupazzo! Mi piace chiacchierare e stare con te."
+      "risposta": "Sono Bing, il tuo amico pupazzo! Mi piace chiacchierare e stare con te."
     },
     {
       "trigger": ["come stai", "come va", "tutto bene", "stai bene", "come stai oggi"],
@@ -23,7 +23,7 @@
       "risposta": "Mi dispiace. Se vuoi parlare sono qui, ti ascolto. Ti mando un abbraccio!"
     },
     {
-      "trigger": ["grazie", "grazie mille", "grazie luigi", "ti ringrazio"],
+      "trigger": ["grazie", "grazie mille", "grazie bing", "ti ringrazio"],
       "risposta": "Prego! Sono sempre qui se hai bisogno."
     },
     {
@@ -48,7 +48,15 @@
     },
     {
       "trigger": ["racconta", "raccontami", "una storia", "dimmi una storia", "favola"],
-      "risposta": "Mi piace tantissimo ascoltare! Raccontami tu qualcosa, io sono qui ad ascoltare."
+      "risposta": "Oggi è un giorno Bing! (Le storie vengono scelte a caso dall'app.)"
+    },
+    {
+      "trigger": ["balla", "danza", "ballare", "danzare"],
+      "risposta": "Guarda guarda! Ballo per te!"
+    },
+    {
+      "trigger": ["consiglio", "cosa faccio", "aiutami a decidere", "flop", "cosa mi consigli"],
+      "risposta": "Flop dice sempre che ogni giorno è un giorno Bing! È un Bing thing!"
     },
     {
       "trigger": ["sì", "si", "ok", "okay", "va bene", "d'accordo", "certo"],
@@ -73,6 +81,10 @@
     {
       "trigger": ["buon appetito", "buon pranzo", "buona cena"],
       "risposta": "Grazie! Buon appetito anche a te! Mangia bene!"
+    },
+    {
+      "trigger": ["carota", "carote", "ti piacciono le carote"],
+      "risposta": "Le carote sono il mio cibo preferito! Crunch crunch!"
     },
     {
       "trigger": ["quanti anni hai", "quanti anni", "quanto sei vecchio"],
