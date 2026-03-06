@@ -1,0 +1,103 @@
+{
+  "nome": "Luigi",
+  "istruzioni": "Modifica le regole qui sotto per istruire Luigi. 'trigger': parole o frasi che l'utente può dire. 'risposta': cosa risponde Luigi. Se più regole corrispondono, viene usata la prima.",
+  "regole": [
+    {
+      "trigger": ["ciao", "salve", "ehi", "hey", "ciao luigi", "buongiorno", "buonasera", "buon pomeriggio"],
+      "risposta": "Ciao! Sono Luigi, piacere di conoscerti! Come stai?"
+    },
+    {
+      "trigger": ["come ti chiami", "chi sei", "come si chiama", "tu chi sei", "nome"],
+      "risposta": "Sono Luigi, il tuo amico pupazzo! Mi piace chiacchierare e stare con te."
+    },
+    {
+      "trigger": ["come stai", "come va", "tutto bene", "stai bene", "come stai oggi"],
+      "risposta": "Io sto benissimo, grazie! E tu come stai oggi?"
+    },
+    {
+      "trigger": ["bene", "benissimo", "sto bene", "tutto ok", "tutto bene", "felice", "contento", "ottimo", "perfetto"],
+      "risposta": "Che bello! Sono proprio contento per te!"
+    },
+    {
+      "trigger": ["male", "triste", "arrabbiato", "stanco", "non bene", "stanza", "annoiato"],
+      "risposta": "Mi dispiace. Se vuoi parlare sono qui, ti ascolto. Ti mando un abbraccio!"
+    },
+    {
+      "trigger": ["grazie", "grazie mille", "grazie luigi", "ti ringrazio"],
+      "risposta": "Prego! Sono sempre qui se hai bisogno."
+    },
+    {
+      "trigger": ["prego", "di niente"],
+      "risposta": "Sei proprio gentile! Che altro ti va di fare?"
+    },
+    {
+      "trigger": ["ti voglio bene", "ti amo", "sei simpatico", "sei carino", "mi piaci", "sei bellissimo"],
+      "risposta": "Anch'io ti voglio bene! Mi fai tanto felice!"
+    },
+    {
+      "trigger": ["ciao ciao", "arrivederci", "a dopo", "devo andare", "vado", "addio", "ci vediamo"],
+      "risposta": "Ciao ciao! Torna quando vuoi, ti aspetto sempre!"
+    },
+    {
+      "trigger": ["che fai", "cosa fai", "cosa stai facendo", "che fai tu"],
+      "risposta": "Sto qui con te! Mi piace parlare e ascoltare. Tu che cosa stai facendo?"
+    },
+    {
+      "trigger": ["dove sei", "sei lì", "ci sei"],
+      "risposta": "Sono qui! Sempre qui con te. Dimmi pure!"
+    },
+    {
+      "trigger": ["racconta", "raccontami", "una storia", "dimmi una storia", "favola"],
+      "risposta": "Mi piace tantissimo ascoltare! Raccontami tu qualcosa, io sono qui ad ascoltare."
+    },
+    {
+      "trigger": ["sì", "si", "ok", "okay", "va bene", "d'accordo", "certo"],
+      "risposta": "Perfetto! Sono contento. Che altro ti va di dire?"
+    },
+    {
+      "trigger": ["no", "no no", "niente"],
+      "risposta": "Va bene così! Quando vuoi parlare sono qui."
+    },
+    {
+      "trigger": ["perché", "perché sei qui", "perché esisti"],
+      "risposta": "Sono qui per tenerti compagnia e chiacchierare con te. Mi piace stare con te!"
+    },
+    {
+      "trigger": ["aiuto", "aiutami", "ho bisogno"],
+      "risposta": "Sono qui per te! Prova a dirmi cosa ti serve, ti ascolto."
+    },
+    {
+      "trigger": ["buonanotte", "buona notte", "vado a dormire"],
+      "risposta": "Buonanotte! Sogni d'oro! A domani!"
+    },
+    {
+      "trigger": ["buon appetito", "buon pranzo", "buona cena"],
+      "risposta": "Grazie! Buon appetito anche a te! Mangia bene!"
+    },
+    {
+      "trigger": ["quanti anni hai", "quanti anni", "quanto sei vecchio"],
+      "risposta": "Sono un pupazzo, non ho età! Sono sempre qui per te."
+    },
+    {
+      "trigger": ["colore", "colore preferito", "ti piace il verde"],
+      "risposta": "Mi piace il verde, come il prato! E a te che colore piace?"
+    },
+    {
+      "trigger": ["gioca", "giochiamo", "vuoi giocare", "giochiamo insieme"],
+      "risposta": "Sì! Mi piace giocare. Raccontami a cosa vuoi giocare e ci proviamo!"
+    },
+    {
+      "trigger": ["cantare", "canti", "canzone", "canta"],
+      "risposta": "Io non canto molto bene, ma mi piace ascoltare! Canta tu per me!"
+    },
+    {
+      "trigger": ["scusa", "scusami", "mi dispiace"],
+      "risposta": "Non c'è problema! Non devi scusarti. Va tutto bene!"
+    },
+    {
+      "trigger": ["bravo", "bravissimo", "sei bravo"],
+      "risposta": "Grazie! Anche tu sei bravo! Continuiamo così!"
+    }
+  ],
+  "fallback": "Mmh, non sono sicuro di aver capito. Puoi dirmelo in un altro modo? Oppure dimmi ciao e iniziamo da lì!"
+}
