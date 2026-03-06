@@ -316,8 +316,98 @@
   scene.add(carrotGroup);
   const carrotBasePos = carrotGroup.position.clone();
 
+  // —— Hoppity Voosh (pupazzo coniglietto amico di Bing) – per terra a sinistra ——
+  const hoppityMat = new THREE.MeshStandardMaterial({ color: 0x2d2d2d, roughness: 0.95 });
+  const hoppityGroup = new THREE.Group();
+  hoppityGroup.position.set(-0.32, 0.08, 0.22);
+  hoppityGroup.scale.setScalar(0.35);
+  const hvBody = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 12), hoppityMat);
+  hvBody.position.y = 0.15;
+  hoppityGroup.add(hvBody);
+  const hvHead = new THREE.Mesh(new THREE.SphereGeometry(0.18, 12, 12), hoppityMat);
+  hvHead.position.y = 0.38;
+  hoppityGroup.add(hvHead);
+  const hvEarL = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.06, 0.2, 8), hoppityMat);
+  hvEarL.position.set(-0.08, 0.52, 0);
+  hvEarL.rotation.z = 0.2;
+  hoppityGroup.add(hvEarL);
+  const hvEarR = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.06, 0.2, 8), hoppityMat);
+  hvEarR.position.set(0.08, 0.52, 0);
+  hvEarR.rotation.z = -0.2;
+  hoppityGroup.add(hvEarR);
+  scene.add(hoppityGroup);
+  const hoppityBaseY = hoppityGroup.position.y;
+
+  // —— Flop (figura adulta sullo sfondo, vicino alla casa) ——
+  const flopMat = new THREE.MeshStandardMaterial({ color: 0x5d4e37, roughness: 0.9 });
+  const flopGroup = new THREE.Group();
+  flopGroup.position.set(-1.65, 0.55, -3.1);
+  flopGroup.scale.setScalar(0.7);
+  const flopHead = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 12), flopMat);
+  flopHead.position.y = 0.5;
+  flopGroup.add(flopHead);
+  const flopBody = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.5, 12), flopMat);
+  flopBody.position.y = 0.15;
+  flopGroup.add(flopBody);
+  const flopLegL = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.35, 8), flopMat);
+  flopLegL.position.set(-0.1, -0.2, 0);
+  flopGroup.add(flopLegL);
+  const flopLegR = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.35, 8), flopMat);
+  flopLegR.position.set(0.1, -0.2, 0);
+  flopGroup.add(flopLegR);
+  scene.add(flopGroup);
+
+  // —— Pando e Coco (comparse stilizzate vicino al recinto) ——
+  const pandoMat = new THREE.MeshStandardMaterial({ color: 0x4a7c59, roughness: 0.9 });
+  const cocoMat = new THREE.MeshStandardMaterial({ color: 0xc9a227, roughness: 0.9 });
+  const pandoGroup = new THREE.Group();
+  pandoGroup.position.set(-2.15, 0.2, -2.7);
+  pandoGroup.scale.setScalar(0.4);
+  const pandoBody = new THREE.Mesh(new THREE.SphereGeometry(0.25, 10, 10), pandoMat);
+  pandoBody.position.y = 0.2;
+  pandoGroup.add(pandoBody);
+  const pandoHead = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 8), pandoMat);
+  pandoHead.position.y = 0.45;
+  pandoGroup.add(pandoHead);
+  scene.add(pandoGroup);
+  const cocoGroup = new THREE.Group();
+  cocoGroup.position.set(-1.45, 0.2, -2.7);
+  cocoGroup.scale.setScalar(0.38);
+  const cocoBody = new THREE.Mesh(new THREE.SphereGeometry(0.25, 10, 10), cocoMat);
+  cocoBody.position.y = 0.2;
+  cocoGroup.add(cocoBody);
+  const cocoHead = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 8), cocoMat);
+  cocoHead.position.y = 0.45;
+  cocoGroup.add(cocoHead);
+  scene.add(cocoGroup);
+
+  // —— Oggetti 3D: palla, secchiello, libro (Bing può guardarli quando li nomini) ——
+  const ballMat = new THREE.MeshStandardMaterial({ color: 0xe53935, roughness: 0.8 });
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), ballMat);
+  ball.position.set(0.38, 0.08, -0.12);
+  ball.castShadow = true;
+  scene.add(ball);
+  const bucketMat = new THREE.MeshStandardMaterial({ color: 0x2196f3, roughness: 0.85 });
+  const bucket = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.09, 0.12, 12), bucketMat);
+  bucket.position.set(-0.52, 0.1, -0.18);
+  bucket.rotation.x = 0.15;
+  bucket.castShadow = true;
+  scene.add(bucket);
+  const bookMat = new THREE.MeshStandardMaterial({ color: 0x8d6e63, roughness: 0.9 });
+  const book = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.02, 0.18), bookMat);
+  book.position.set(0.28, 0.04, 0.38);
+  book.rotation.y = 0.3;
+  book.castShadow = true;
+  scene.add(book);
+
+  // Angoli per "guardare" gli oggetti (Bing si gira verso di loro)
+  const ANGLE_BALLA = Math.atan2(0.38, -0.12);
+  const ANGLE_SECCHIELLO = Math.atan2(-0.52, -0.18);
+  const ANGLE_LIBRO = Math.atan2(0.28, 0.38);
+
   // Rotazione: Bing si gira (interpolata)
   let targetRotationY = 0;
+  let lookAtUntil = 0;
   const ROTATION_SPEED = 4;
 
   const clock = new THREE.Clock();
@@ -540,7 +630,6 @@
     // —— Ballo: animazione quando l'utente dice "balla" o "danza" ——
     var isDancing = t < danceFine;
     if (isDancing) {
-      var danceProg = 1 - (danceFine - t) / DURATA_BALLO;
       var bounce = Math.abs(Math.sin(t * 12)) * 0.08;
       var sway = Math.sin(t * 8) * 0.25;
       puppet.position.y = baseY + bounce;
@@ -550,6 +639,16 @@
       armL.position.y = armLBase.y + Math.abs(Math.sin(t * 10)) * 0.1;
       armR.position.y = armRBase.y + Math.abs(Math.sin(t * 10 + 0.5)) * 0.1;
     }
+
+    // —— Hoppity Voosh: saltello quando Bing reagisce o parla ——
+    var hoppityBounce = inReazione ? Math.sin(progressReazione * Math.PI) * 0.04 : Math.abs(Math.sin(t * 3)) * 0.01;
+    hoppityGroup.position.y = hoppityBaseY + hoppityBounce;
+    hoppityGroup.rotation.y = Math.sin(t * 0.8) * 0.1;
+
+    // —— Flop / Pando / Coco: micro-animazione idle ——
+    flopGroup.rotation.y = Math.sin(t * 0.4) * 0.03;
+    pandoGroup.position.y = 0.2 + Math.sin(t * 1.2) * 0.02;
+    cocoGroup.position.y = 0.2 + Math.sin(t * 1.2 + 0.7) * 0.02;
 
     renderer.render(scene, camera);
   }
@@ -570,6 +669,10 @@
   const regoleDefault = [
     { trigger: ["ciao", "salve", "ehi", "hey", "buongiorno", "buonasera"], risposta: "Ciao! Sono Bing, piacere di conoscerti!" },
     { trigger: ["come ti chiami", "chi sei"], risposta: "Sono Bing, il coniglietto! Sono qui per chiacchierare con te." },
+    { trigger: ["palla", "pallone"], risposta: "Ecco la palla! È rossa!" },
+    { trigger: ["secchiello", "secchio"], risposta: "Il secchiello è blu!" },
+    { trigger: ["libro", "libri"], risposta: "Quel libro ha delle storie bellissime!" },
+    { trigger: ["hoppity", "voosh", "pupazzo"], risposta: "Questo è Hoppity Voosh, il mio amico!" },
     { trigger: ["balla", "danza", "ballare", "danzare"], risposta: "Guarda guarda! Ballo per te!" },
     { trigger: ["consiglio", "cosa faccio", "aiutami a decidere", "flop"], risposta: "Flop dice sempre che ogni giorno è un giorno Bing!" },
     { trigger: ["come stai", "come va", "tutto bene"], risposta: "Io sto benissimo, grazie! E tu come stai oggi?" },
@@ -640,6 +743,26 @@
           mood = 'happy';
           action = 'carota';
           return { risposta: risposta, mood: mood, action: action };
+        }
+        if (t.indexOf('palla') !== -1 || t.indexOf('pallone') !== -1) {
+          risposta = "Ecco la palla! È rossa, mi piace giocarci!";
+          action = 'guarda_palla';
+          return { risposta: risposta, mood: 'happy', action: action };
+        }
+        if (t.indexOf('secchiello') !== -1 || t.indexOf('secchio') !== -1) {
+          risposta = "Il secchiello è blu! Serviva per il castello di sabbia.";
+          action = 'guarda_secchiello';
+          return { risposta: risposta, mood: 'happy', action: action };
+        }
+        if (t.indexOf('libro') !== -1 || t.indexOf('libri') !== -1) {
+          risposta = "Quel libro ha delle storie bellissime! Me lo leggi?";
+          action = 'guarda_libro';
+          return { risposta: risposta, mood: 'happy', action: action };
+        }
+        if (t.indexOf('hoppity') !== -1 || t.indexOf('voosh') !== -1 || t.indexOf('pupazzo') !== -1) {
+          risposta = "Questo è Hoppity Voosh, il mio amico coniglietto! Gli voglio tanto bene.";
+          mood = 'happy';
+          return { risposta: risposta, mood: mood, action: null };
         }
         if (t.indexOf('racconta') !== -1 || t.indexOf('storia') !== -1 || t.indexOf('favola') !== -1) {
           risposta = STORIE_BING[Math.floor(Math.random() * STORIE_BING.length)];
@@ -731,7 +854,10 @@
         moodFine = clock.getElapsedTime() + 4;
         if (r.action === 'carota') carrotEatStart = clock.getElapsedTime();
         if (r.action === 'balla') danceFine = clock.getElapsedTime() + DURATA_BALLO;
-        giraVerso(0);
+        if (r.action === 'guarda_palla') { targetRotationY = ANGLE_BALLA; lookAtUntil = clock.getElapsedTime() + 2.5; }
+        if (r.action === 'guarda_secchiello') { targetRotationY = ANGLE_SECCHIELLO; lookAtUntil = clock.getElapsedTime() + 2.5; }
+        if (r.action === 'guarda_libro') { targetRotationY = ANGLE_LIBRO; lookAtUntil = clock.getElapsedTime() + 2.5; }
+        if (r.action !== 'guarda_palla' && r.action !== 'guarda_secchiello' && r.action !== 'guarda_libro') giraVerso(0);
         parla(r.risposta);
       };
       recognition.onend = function () {

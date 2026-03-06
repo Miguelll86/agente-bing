@@ -3,25 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#fff5e6">
+  <meta name="theme-color" content="#b4e4f7">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   <title>Bing – Il coniglietto</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
+    html {
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background: #b4e4f7;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
       width: 100%;
       height: 100%;
       min-height: 100vh;
       min-height: 100dvh;
       overflow: hidden;
+      background: #b4e4f7;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
       -webkit-tap-highlight-color: transparent;
     }
     #canvas {
       display: block;
-      width: 100%;
-      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      min-height: -webkit-fill-available;
       touch-action: none;
     }
     #micBtn {

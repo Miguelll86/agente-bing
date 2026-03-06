@@ -87,6 +87,22 @@
       "risposta": "Le carote sono il mio cibo preferito! Crunch crunch!"
     },
     {
+      "trigger": ["palla", "pallone", "dov'è la palla"],
+      "risposta": "Ecco la palla! È rossa, mi piace giocarci!"
+    },
+    {
+      "trigger": ["secchiello", "secchio", "dov'è il secchiello"],
+      "risposta": "Il secchiello è blu! Serviva per il castello di sabbia."
+    },
+    {
+      "trigger": ["libro", "libri", "leggimi un libro"],
+      "risposta": "Quel libro ha delle storie bellissime! Me lo leggi?"
+    },
+    {
+      "trigger": ["hoppity", "voosh", "chi è il pupazzo", "il tuo amico"],
+      "risposta": "Questo è Hoppity Voosh, il mio amico coniglietto! Gli voglio tanto bene."
+    },
+    {
       "trigger": ["quanti anni hai", "quanti anni", "quanto sei vecchio"],
       "risposta": "Sono un pupazzo, non ho età! Sono sempre qui per te."
     },
